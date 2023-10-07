@@ -1,0 +1,37 @@
+.roomListItem {
+  position: relative;
+}
+
+.roomListItem::after {
+  content: "";
+  position: absolute;
+  background-color: #647494;
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 100%;
+  right: 1rem;
+  transform: scale(0);
+  transition: all 0.2s ease;
+}
+
+.roomListItem:hover::after {
+  transform: scale(1) rotate(45deg);
+}
+
+.selectedRoom {
+  background-color: #cbd5e1;
+}
+
+.roomListThumb {
+  transition: all 0.2s ease;
+  border-radius: 100%;
+}
+
+.selectedRoom>.roomListThumb {
+  border-radius: 30%;
+  background-color: #10b981;
+}
+
+.selectedRoom>.roomListThumb>span {
+  color: #f8fafc;
+}
