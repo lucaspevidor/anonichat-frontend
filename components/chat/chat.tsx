@@ -8,10 +8,7 @@ import moment from "moment";
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-
-interface IChatProps {
-  selectedRoom: string,
-}
+import { useAppState } from "@/hooks/app-store/store-hook";
 
 interface IMessage {
   "id": string,
@@ -21,40 +18,20 @@ interface IMessage {
   "createdAt": string,
 }
 
-const Chat = ({selectedRoom}: IChatProps) => {
-  const [loadingMsg, setLoadingMsg] = useState(true);
+const Chat = () => {
   const [sendingMsg, setSendingMsg] = useState(false);
-  const [messages, setMessages] = useState<IMessage[]>([]);
   const [message, setMessage] = useState("");
 
   const {auth} = useAuth();
-
-  useEffect(() => {
-    setLoadingMsg(true);
-    
-    api.get<IMessage[]>(`/messages/${selectedRoom}`)
-      .then(response => setMessages(response.data))
-      
-      .catch(error => {
-        if (error instanceof AxiosError) {
-          console.log(error.response?.data.error);
-        } else {
-          console.log(error);
-        }
-      })
-      
-      .finally(() => {
-        setLoadingMsg(false);
-      })
-  }, [selectedRoom]);
+  const appState = useAppState();
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (message.trim() === "" || selectedRoom === "")
+    if (message.trim() === "" || appState.selectedRoom === undefined)
       return;
 
     setSendingMsg(true);
-    api.post<IMessage>(`/messages/${selectedRoom}`, {content: message})
+    api.post<IMessage>(`/messages/${appState.selectedRoom}`, {content: message})
       .then(response => {
         console.log(response.data);
         setMessage("");
@@ -66,12 +43,12 @@ const Chat = ({selectedRoom}: IChatProps) => {
   return ( 
     <div className="flex flex-col justify-center items-center bg-slate-200 w-full">
       {
-        loadingMsg ?
+        appState.loading.messages ?
         <PulseLoader color="#94a3b8" className=""/> :
         <>
           <ScrollArea className="w-full h-full px-5 pt-2">
             <div className="flex flex-col gap-4 scroll-smooth">
-            {messages.map(msg => (
+            {appState.selectedRoom?.messages.map(msg => (
               <div key={msg.id} 
                 className={cn("flex flex-row flex-1 max-w", msg.senderName === auth?.username && "justify-end")}
               >

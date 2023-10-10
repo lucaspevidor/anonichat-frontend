@@ -2,7 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export default function middleware(request: NextRequest) {
   let cookie = request.cookies.get("jwt");
-  console.log("middleware")
   if (!(cookie?.value))
     return NextResponse.redirect(new URL("/auth/sign-in", request.url));
 }
