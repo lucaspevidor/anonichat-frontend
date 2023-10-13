@@ -65,12 +65,13 @@ const SignIn = () => {
       const response = await api.post<ISessionResponse>("/session", {
         username: values.username,
         password: values.password
-      }, {withCredentials: true})
+      });
       console.log(response.data);
-      setAuth && setAuth({
+      setAuth({
         jwt: response.data.token,
         status:"authenticated",
-        username: response.data.user.username
+        username: response.data.user.username,
+        id: response.data.user.id
       })
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data.error) {

@@ -6,9 +6,11 @@ import { useEffect, useState } from "react";
 import { api } from "@/services/api";
 import { IRoom } from "@/hooks/app-store/reducer";
 import { useReduxDispatch } from "@/hooks/app-store/store-hook";
+import { useAuth } from "@/hooks/auth-hook";
 
 const WebChat = () => {
   const dispatch = useReduxDispatch();
+  const {auth} = useAuth();
 
   useEffect(() => {    
     api.get<IRoom[]>("/load")
@@ -21,7 +23,7 @@ const WebChat = () => {
         });
 
         if (response.data.length > 0)
-          dispatch({type: "selected_room_set", payload: {selectedRoom: response.data[0]}})
+          dispatch({type: "selected_room_set", payload: {selectedRoom: response.data[0].id}})
       })
     .catch(error => console.error(error));
   }, []);

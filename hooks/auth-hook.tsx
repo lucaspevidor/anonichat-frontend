@@ -6,6 +6,7 @@ export interface IAuth {
   jwt: string | null,
   status: "authenticated" | "unauthenticated" | "loading",
   username: string | null,
+  id: string | null,
 }
 
 interface IAuthContext {
@@ -14,20 +15,17 @@ interface IAuthContext {
   clearAuth: () => void;
 }
 
-const authContext = createContext<Partial<IAuthContext>>({});
-
-export function useAuth() {
-  return useContext(authContext);
-}
+const authInit: IAuth = {jwt: null, status: "unauthenticated", username: null, id: null};
+const authContext = createContext<IAuthContext | null>(null);
 
 export function AuthProvider(
   {children} : {children: React.ReactNode}
 ) {
-  const [auth, setAuth] = useState<IAuth>({jwt: null, status: "loading", username: null});
+  const [auth, setAuth] = useState<IAuth>({...authInit, status: "loading"});
   const [loaded, setLoaded] = useState(false);
 
   function clearAuth() {
-    setAuth({jwt: null, status: "unauthenticated", username: null});
+    setAuth(authInit);
   }
 
   useEffect(() => {
@@ -38,7 +36,7 @@ export function AuthProvider(
       const authObj = JSON.parse(authStorage);
       setAuth(authObj);
     } else {
-      setAuth({jwt: null, status: "unauthenticated", username: null});
+      setAuth(authInit);
     }
     setLoaded(true);
   }, []);
@@ -57,4 +55,13 @@ export function AuthProvider(
       {children}
     </authContext.Provider>
   )
+}
+
+export function useAuth() {
+  const ctx = useContext(authContext);
+  if (ctx === null) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  
+  return ctx;
 }

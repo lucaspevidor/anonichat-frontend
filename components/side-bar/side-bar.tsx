@@ -13,6 +13,7 @@ import AddChannelDialog from "./add-channel-dialog";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
 import { useAppState, useReduxDispatch } from "@/hooks/app-store/store-hook";
 import { IRoom } from "@/hooks/app-store/reducer";
+import { AxiosError } from "axios";
 
 const SideBar = () => {
 
@@ -24,9 +25,26 @@ const SideBar = () => {
     dispatch({
       type: "selected_room_set",
       payload: {
-        selectedRoom: room,
+        selectedRoom: room.id,
       }
     })
+  }
+
+  function removeRoom(room: IRoom) {
+    api.delete<IRoom>(`/room/${room.id}`)
+      .then(response => {
+        dispatch({
+          type: "room_deleted",
+          payload: {
+            id: response.data.id
+          }
+        })
+      })
+      .catch (error => {
+        if (error instanceof AxiosError) {
+          console.error(error.response?.data.message)
+        }
+      })
   }
 
   return ( 
@@ -48,7 +66,7 @@ const SideBar = () => {
           {appState.rooms.map((room) => (
             <ContextMenu key={room.id} >
               <ContextMenuTrigger asChild>
-                <button className={cn("flex gap-4 px-5 items-center py-2 w-full roomListItem", room.id === appState.selectedRoom?.id && "selectedRoom")} onClick={() => setSelectedRoom(room)}>
+                <button className={cn("flex gap-4 px-5 items-center py-2 w-full roomListItem", room.id === appState.selectedRoom && "selectedRoom")} onClick={() => setSelectedRoom(room)}>
                     <div className="flex justify-center items-center w-8 h-8 bg-slate-200 roomListThumb">
                       <span className="text-muted-foreground">{room.name[0].toUpperCase()}</span>
                     </div>
@@ -56,7 +74,7 @@ const SideBar = () => {
                 </button>
               </ContextMenuTrigger>
               <ContextMenuContent className="w-64">
-                <ContextMenuItem>
+                <ContextMenuItem onSelect={() => removeRoom(room)}>
                   Delete channel
                 </ContextMenuItem>
               </ContextMenuContent>

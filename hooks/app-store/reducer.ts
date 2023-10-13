@@ -20,7 +20,7 @@ export interface IAppState {
     room: boolean,
     messages: boolean
   }
-  selectedRoom: IRoom | undefined,
+  selectedRoom: string | undefined,
 }
 
 type RoomAddedAction = {
@@ -55,7 +55,7 @@ type RoomDeletedAction = {
 type SelectedRoomSet = {
   type: "selected_room_set",
   payload: {
-    selectedRoom: IRoom
+    selectedRoom: string
   }
 }
 
@@ -108,17 +108,19 @@ export function Reducer(state: IAppState, action: ReduxAction): IAppState {
     case "room_changed":
       return {
         ...state,
-        rooms: state.rooms.map(room => {
-          if (room.id !== action.payload.id)
-            return room
-
-          return action.payload.newRoom;
-        })
+        rooms: state.rooms.map(room =>
+          room.id !== action.payload.id ?
+            room :
+            action.payload.newRoom
+        )
       }
     case "room_deleted":
       return {
         ...state,
-        rooms: state.rooms.filter(r => r.id !== action.payload.id)
+        rooms: state.rooms.filter(r => r.id !== action.payload.id),
+        selectedRoom: (action.payload.id === state.selectedRoom) ?
+          ((state.rooms.length > 1) ? state.rooms[0].id : "") :
+          state.selectedRoom
       }
 
     case "selected_room_set":
@@ -128,15 +130,17 @@ export function Reducer(state: IAppState, action: ReduxAction): IAppState {
       }
 
     case "message_added":
+      console.log("message_added_called");
       return {
         ...state,
-        rooms: state.rooms.map(room => {
-          if (room.id !== action.payload.message.roomId)
-            return room
-
-          room.messages = [...room.messages, action.payload.message]
-          return room
-        })
+        rooms: state.rooms.map(room =>
+          (room.id !== action.payload.message.roomId) ?
+            room :
+            {
+              ...room,
+              messages: [...room.messages, action.payload.message]
+            }
+        )
       }
     case "message_multiple_added":
       let newRooms = [...state.rooms];
@@ -155,13 +159,14 @@ export function Reducer(state: IAppState, action: ReduxAction): IAppState {
     case "message_deleted":
       return {
         ...state,
-        rooms: state.rooms.map(room => {
-          if (room.id !== action.payload.roomId)
-            return room
-
-          room.messages = room.messages.filter(m => m.id !== action.payload.messageId);
-          return room;
-        })
+        rooms: state.rooms.map(room =>
+          room.id !== action.payload.roomId ?
+            room :
+            {
+              ...room,
+              messages: room.messages.filter(m => m.id !== action.payload.messageId)
+            }
+        )
       }
 
     case "loading_room_set":
