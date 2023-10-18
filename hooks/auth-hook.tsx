@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, createContext, useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
 export interface IAuth {
   jwt: string | null,
@@ -15,22 +16,23 @@ interface IAuthContext {
   clearAuth: () => void;
 }
 
-const authInit: IAuth = {jwt: null, status: "unauthenticated", username: null, id: null};
+const authInit: IAuth = { jwt: null, status: "unauthenticated", username: null, id: null };
 const authContext = createContext<IAuthContext | null>(null);
 
 export function AuthProvider(
-  {children} : {children: React.ReactNode}
+  { children }: { children: React.ReactNode }
 ) {
-  const [auth, setAuth] = useState<IAuth>({...authInit, status: "loading"});
+  const [auth, setAuth] = useState<IAuth>({ ...authInit, status: "loading" });
   const [loaded, setLoaded] = useState(false);
 
   function clearAuth() {
+    Cookies.remove("jwt", {
+      domain: ".lucaspevidor.com"
+    })
     setAuth(authInit);
   }
 
   useEffect(() => {
-    console.log("Retrieving auth obj");
-    console.log({status: auth.status});
     const authStorage = localStorage.getItem("auth");
     if (authStorage) {
       const authObj = JSON.parse(authStorage);
@@ -44,14 +46,12 @@ export function AuthProvider(
   useEffect(() => {
     if (!loaded) return;
 
-    console.log("Setting auth obj")
-    console.log({status: auth.status});
     const authStr = JSON.stringify(auth);
     localStorage.setItem("auth", authStr)
   }, [auth, loaded]);
 
   return (
-    <authContext.Provider value={{auth, setAuth, clearAuth}}>
+    <authContext.Provider value={{ auth, setAuth, clearAuth }}>
       {children}
     </authContext.Provider>
   )
@@ -62,6 +62,6 @@ export function useAuth() {
   if (ctx === null) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-  
+
   return ctx;
 }

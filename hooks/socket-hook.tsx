@@ -23,13 +23,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       setSocket(io(socketUrl));
     } else {
       socket.on("connect", () => {
-        console.log(`Socket ${socket.id} is connected`)
-
         socket.emit("begin", auth.id, auth.jwt);
       });
 
       socket.on("room-created", (room) => {
-        console.log("New room has been created", { room });
         socket.emit("begin", auth.id, auth.jwt);
 
         dispatch({
@@ -41,8 +38,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       })
 
       socket.on("new-message", (message: IMessage) => {
-        console.log(`New message has been received`, { message });
-
         dispatch({
           type: "message_added",
           payload: {
@@ -52,8 +47,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       })
 
       socket.on("user-added", (userId, username, updatedRoom: IRoom) => {
-        console.log(`User ${username} has been added to a room`, updatedRoom);
-
         dispatch({
           type: "user_added_to_room",
           payload: {
@@ -64,8 +57,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       })
 
       socket.on("user-removed", (userId, updatedRoom: IRoom) => {
-        console.log(`User ${userId} has been removed from a room`, updatedRoom);
-
         if (userId === auth.id) {
           dispatch({
             type: "room_deleted",
@@ -86,7 +77,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       })
 
       socket.on("room-inserted", (updatedRoom: IRoom) => {
-        console.log(`You have been added to a new room`, updatedRoom);
         socket.emit("room-inserted-ack", updatedRoom);
 
         dispatch({
@@ -98,8 +88,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       })
 
       socket.on("room-deleted", (deletedRoom: IRoom) => {
-        console.log("A room has been deleted", deletedRoom);
-
         dispatch({
           type: "room_deleted",
           payload: {

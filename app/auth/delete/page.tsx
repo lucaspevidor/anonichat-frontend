@@ -37,7 +37,6 @@ const SignUp = () => {
   const { push, back } = useRouter();
 
   useEffect(() => {
-    console.log({ pageAuth: auth?.status });
     if (auth && auth.status === "unauthenticated" && username === "") {
       push("/auth/sign-in");
     }

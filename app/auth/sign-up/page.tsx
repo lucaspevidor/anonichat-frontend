@@ -83,8 +83,6 @@ const SignUp = () => {
         password: values.password
       });
 
-      console.log({ userResponse });
-
       const sessionResponse = await api.post<ISessionResponse>("/session", {
         username: values.username,
         password: values.password
@@ -109,7 +107,6 @@ const SignUp = () => {
   }
 
   function signInClicked() {
-    console.log("Clicked");
     push("/auth/sign-in");
   }
 

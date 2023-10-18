@@ -55,7 +55,6 @@ const SignIn = () => {
         username: values.username,
         password: values.password
       });
-      console.log(response.data);
       setAuth({
         jwt: response.data.token,
         status: "authenticated",

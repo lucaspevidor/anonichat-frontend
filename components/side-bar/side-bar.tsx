@@ -38,7 +38,7 @@ const SideBar = () => {
 
   function SignOut() {
     clearAuth();
-    push("/auth/sign-in");
+    // push("/auth/sign-in");
   }
 
   return (
