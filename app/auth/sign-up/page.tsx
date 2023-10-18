@@ -120,7 +120,7 @@ const SignUp = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="">
             <CardHeader>
               <CardTitle className="text-center">Sign up</CardTitle>
-              <CardDescription className="text-center">to AnonChat</CardDescription>
+              <CardDescription className="text-center">to AnoniChat</CardDescription>
             </CardHeader>
             <CardContent>
               <FormField

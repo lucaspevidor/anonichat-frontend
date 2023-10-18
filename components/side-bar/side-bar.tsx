@@ -45,14 +45,14 @@ const SideBar = () => {
     <div className="flex flex-col h-full bg-slate-100 max-w-[20rem] min-w-[20rem] z-20 shadow-[0_0_10px_rgba(0,0,0,0.1)]">
       <div className="flex justify-between items-center p-5">
         <div className="flex flex-col">
-          <span className="text-2xl font-semibold text-slate-800">AnonChat</span>
+          <span className="text-2xl font-semibold text-slate-800">AnoniChat</span>
           <span className="text-muted-foreground">Welcome, {auth?.username}</span>
         </div>
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="ghost" className="p-0 m-0">
               <div className="w-12 h-12 rounded-full flex justify-center items-center bg-slate-200">
-                <span className="text-2xl text-muted-foreground">{auth.username && auth.username[0]}</span>
+                <span className="text-2xl text-muted-foreground">{auth.username && auth.username[0].toUpperCase()}</span>
               </div>
             </Button>
           </PopoverTrigger>

@@ -32,12 +32,12 @@ const SignUp = () => {
   const [reqLoading, setReqLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const {auth, clearAuth} = useAuth();
+  const { auth, clearAuth } = useAuth();
 
   const { push, back } = useRouter();
 
   useEffect(() => {
-    console.log({pageAuth: auth?.status});
+    console.log({ pageAuth: auth?.status });
     if (auth && auth.status === "unauthenticated" && username === "") {
       push("/auth/sign-in");
     }
@@ -62,33 +62,33 @@ const SignUp = () => {
     setReqLoading(false);
   }
 
-  return ( 
+  return (
     <div className="flex flex-col items-center justify-center h-full bg-secondary">
       <Card className="min-w-[22.5rem] w-[22.5rem] flex flex-col">
         <CardHeader>
-          <CardTitle className="text-center">{username ? "User deleted" : "Delete user"}</CardTitle>
+          <CardTitle className="text-center">{username ? "Account deleted" : "Delete account"}</CardTitle>
         </CardHeader>
         {
           username === "" ?
             <>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Are you sure you want to delete your user? All of your channels and messages will be deleted. This operation cannot be reversed.
+                  Are you sure you want to delete your account? All of your channels and messages will be deleted. This operation cannot be reversed.
                 </p>
                 {
                   errorMsg !== "" && <span className="self-start text-destructive text-sm font-semibold">Error: {errorMsg}</span>
-                }                
+                }
               </CardContent>
               <CardFooter className="flex flex-row-reverse gap-3">
                 <Button className="w-full" variant="destructive" onClick={() => deleteUser()}>
                   {
                     reqLoading ?
-                      <PulseLoader size={8} color="#fff"/> :
+                      <PulseLoader size={8} color="#fff" /> :
                       "Delete"
                   }
                 </Button>
                 <Button className="w-full" onClick={() => back()}>Go back</Button>
-              </CardFooter>          
+              </CardFooter>
             </> :
             <>
               <CardContent>
@@ -105,5 +105,5 @@ const SignUp = () => {
     </div>
   );
 }
- 
+
 export default SignUp;
