@@ -26,10 +26,11 @@ import { useRouter } from "next/navigation";
 // })
 
 const formSchema = z.object({
-  username: z.string().min(1, {message: "Please inform your username."}),
-  password: z.string().min(1, {message: "Please inform your password."}),
-  confPassword: z.string().min(1, {message: "Please confirm your password."})
-}).superRefine(({confPassword, password}, ctx) => {
+  username: z.string().min(1, { message: "Please inform your username." })
+    .regex(/^[\w\-]+$/, "Your username has to contain only letters and numbers"),
+  password: z.string().min(1, { message: "Please inform your password." }),
+  confPassword: z.string().min(1, { message: "Please confirm your password." })
+}).superRefine(({ confPassword, password }, ctx) => {
   if (confPassword !== password) {
     ctx.addIssue({
       code: "custom",
@@ -54,16 +55,16 @@ interface ISessionResponse {
 
 const SignUp = () => {
   const [reqLoading, setReqLoading] = useState(false);
-  const {auth, setAuth} = useAuth();
+  const { auth, setAuth } = useAuth();
   const [errorMsg, setErrorMsg] = useState("");
 
   const { push } = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver:zodResolver(formSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
-      password:"",
+      password: "",
       confPassword: "",
     }
   })
@@ -82,7 +83,7 @@ const SignUp = () => {
         password: values.password
       });
 
-      console.log({userResponse});
+      console.log({ userResponse });
 
       const sessionResponse = await api.post<ISessionResponse>("/session", {
         username: values.username,
@@ -91,14 +92,18 @@ const SignUp = () => {
 
       setAuth && setAuth({
         jwt: sessionResponse.data.token,
-        status:"authenticated",
-        username: sessionResponse.data.user.username
+        status: "authenticated",
+        username: sessionResponse.data.user.username,
+        id: sessionResponse.data.user.id,
       })
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data.error) {
         setErrorMsg(error.response.data.error)
       }
-      else console.error(error);
+      else {
+        console.error(error);
+        setErrorMsg("Internal server error");
+      }
     }
     setReqLoading(false);
   }
@@ -108,7 +113,7 @@ const SignUp = () => {
     push("/auth/sign-in");
   }
 
-  return ( 
+  return (
     <div className="flex flex-col items-center justify-center h-full bg-secondary">
       <Card className="min-w-[22.5rem] min-h-[29rem]">
         <Form {...form}>
@@ -121,7 +126,7 @@ const SignUp = () => {
               <FormField
                 control={form.control}
                 name="username"
-                render={({field}) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
@@ -134,7 +139,7 @@ const SignUp = () => {
               <FormField
                 control={form.control}
                 name="password"
-                render={({field}) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
@@ -147,7 +152,7 @@ const SignUp = () => {
               <FormField
                 control={form.control}
                 name="confPassword"
-                render={({field}) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Confirm password</FormLabel>
                     <FormControl>
@@ -161,11 +166,11 @@ const SignUp = () => {
             <CardFooter className="flex flex-col gap-3">
               {
                 errorMsg !== "" && <span className="self-start text-destructive text-sm font-semibold">Error: {errorMsg}</span>
-              }                
+              }
               <Button type="submit" className="w-full">
                 {
                   reqLoading ?
-                    <PulseLoader size={8} color="#fff"/> :
+                    <PulseLoader size={8} color="#fff" /> :
                     "Sign Up"
                 }
               </Button>
@@ -177,5 +182,5 @@ const SignUp = () => {
     </div>
   );
 }
- 
+
 export default SignUp;

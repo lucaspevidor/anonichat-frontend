@@ -52,6 +52,22 @@ type RoomDeletedAction = {
   }
 }
 
+type UserAddedToRoomAction = {
+  type: "user_added_to_room",
+  payload: {
+    roomId: string,
+    userId: string,
+  }
+}
+
+type UserRemovedFromRoomAction = {
+  type: "user_removed_from_room",
+  payload: {
+    roomId: string,
+    userId: string,
+  }
+}
+
 type SelectedRoomSet = {
   type: "selected_room_set",
   payload: {
@@ -88,7 +104,7 @@ type LoadingSetRoomAction = {
   }
 }
 
-type RoomAction = RoomAddedAction | RoomFirstLoadAction | RoomChangedAction | RoomDeletedAction | SelectedRoomSet;
+type RoomAction = RoomAddedAction | RoomFirstLoadAction | RoomChangedAction | RoomDeletedAction | UserAddedToRoomAction | UserRemovedFromRoomAction | SelectedRoomSet;
 type MessageAction = MessageAddedAction | MessageMultipleAddedAction | MessageDeletedAction;
 type LoaderAction = LoadingSetRoomAction;
 export type ReduxAction = RoomAction | MessageAction | LoaderAction;
@@ -99,6 +115,7 @@ export function Reducer(state: IAppState, action: ReduxAction): IAppState {
       return {
         ...state,
         rooms: [...state.rooms, action.payload.room],
+        selectedRoom: action.payload.room.id,
       }
     case "room_first_load":
       return {
@@ -123,6 +140,35 @@ export function Reducer(state: IAppState, action: ReduxAction): IAppState {
           state.selectedRoom
       }
 
+    case "user_added_to_room":
+      return {
+        ...state,
+        rooms: state.rooms.map(r =>
+          r.id !== action.payload.roomId ?
+            r :
+            {
+              ...r,
+              memberIDs: [
+                ...r.memberIDs.filter(id => id !== action.payload.userId),
+                action.payload.userId
+              ]
+            }
+        )
+      }
+
+    case "user_removed_from_room":
+      return {
+        ...state,
+        rooms: state.rooms.map(r =>
+          r.id !== action.payload.roomId ?
+            r :
+            {
+              ...r,
+              memberIDs: r.memberIDs.filter(m => m !== action.payload.userId),
+            }
+        )
+      }
+
     case "selected_room_set":
       return {
         ...state,
@@ -130,7 +176,6 @@ export function Reducer(state: IAppState, action: ReduxAction): IAppState {
       }
 
     case "message_added":
-      console.log("message_added_called");
       return {
         ...state,
         rooms: state.rooms.map(room =>

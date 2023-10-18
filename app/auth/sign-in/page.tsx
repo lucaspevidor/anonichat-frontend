@@ -14,20 +14,9 @@ import { api } from "@/services/api";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 
-// const formSchema = z.object({
-//   username: z.string().min(4, {
-//     message: "Username must be at least 4 characters."
-//   }).max(8, {
-//     message: "Username must be at most 8 characters."
-//   }),
-//   password: z.string().min(5, {
-//     message: "Password must be at least 5 characters."
-//   })
-// })
-
 const formSchema = z.object({
-  username: z.string().min(1, {message: "Please inform your username."}),
-  password: z.string().min(1, {message: "Please inform your password."})
+  username: z.string().min(1, { message: "Please inform your username." }),
+  password: z.string().min(1, { message: "Please inform your password." })
 })
 
 interface ISessionResponse {
@@ -40,16 +29,16 @@ interface ISessionResponse {
 
 const SignIn = () => {
   const [reqLoading, setReqLoading] = useState(false);
-  const {auth, setAuth} = useAuth();
+  const { auth, setAuth } = useAuth();
   const [errorMsg, setErrorMsg] = useState("");
 
-  const {push} = useRouter();
+  const { push } = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver:zodResolver(formSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
-      password:"",
+      password: "",
     }
   })
 
@@ -69,7 +58,7 @@ const SignIn = () => {
       console.log(response.data);
       setAuth({
         jwt: response.data.token,
-        status:"authenticated",
+        status: "authenticated",
         username: response.data.user.username,
         id: response.data.user.id
       })
@@ -77,66 +66,69 @@ const SignIn = () => {
       if (error instanceof AxiosError && error.response?.data.error) {
         setErrorMsg(error.response.data.error)
       }
-      else console.error(error);
+      else {
+        console.error(error);
+        setErrorMsg("Internal server error");
+      }
     }
     setReqLoading(false);
   }
 
-  return ( 
+  return (
     <div className="flex flex-col items-center justify-center h-full bg-secondary">
       <Card className="min-w-[22.5rem]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="">
-              <CardHeader>
-                <CardTitle className="text-center">Sign in</CardTitle>
-                <CardDescription className="text-center">to AnonChat</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-              <CardFooter className="flex flex-col gap-3">
+            <CardHeader>
+              <CardTitle className="text-center">Sign in</CardTitle>
+              <CardDescription className="text-center">to AnonChat</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter className="flex flex-col gap-3">
+              {
+                errorMsg !== "" && <span className="self-start text-destructive text-sm font-semibold">Error: {errorMsg}</span>
+              }
+              <Button type="submit" className="w-full">
                 {
-                  errorMsg !== "" && <span className="self-start text-destructive text-sm font-semibold">Error: {errorMsg}</span>
-                }                
-                <Button type="submit" className="w-full">
-                  {
-                    reqLoading ?
-                      <PulseLoader size={8} color="#fff"/> :
-                      "Sign In"
-                  }
-                </Button>
-                <Button variant="secondary" type="button" className="w-full" onClick={() => push("/auth/sign-up")}>Sign Up</Button>
-              </CardFooter>
-            </form>
-          </Form>
+                  reqLoading ?
+                    <PulseLoader size={8} color="#fff" /> :
+                    "Sign In"
+                }
+              </Button>
+              <Button variant="secondary" type="button" className="w-full" onClick={() => push("/auth/sign-up")}>Sign Up</Button>
+            </CardFooter>
+          </form>
+        </Form>
       </Card>
     </div>
   );
 }
- 
+
 export default SignIn;

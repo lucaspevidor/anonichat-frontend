@@ -58,7 +58,7 @@ const Chat = () => {
   }
 
   return ( 
-    <div className="flex flex-col justify-center items-center bg-slate-200 w-full">
+    <div className="flex flex-col justify-center items-center bg-slate-200 w-full flex-1 min-h-0 z-0">
       {
         appState.loading.messages ?
         <PulseLoader color="#94a3b8" className=""/> :
@@ -85,7 +85,7 @@ const Chat = () => {
           </ScrollArea>
           <div className="w-full p-2">
             <form className="flex gap-2" onSubmit={(e) => onSubmit(e)}>
-              <Input type="text" placeholder="Message" value={message} onChange={e => setMessage(e.target.value)} />
+              <Input disabled={!selectedRoom} type="text" placeholder="Message" value={message} onChange={e => setMessage(e.target.value)} />
               <Button type="submit" disabled={sendingMsg || message===""} className="bg-slate-800 w-20 transition-all">
                 {
                   sendingMsg ?

@@ -7,12 +7,22 @@ import { api } from "@/services/api";
 import { IRoom } from "@/hooks/app-store/reducer";
 import { useReduxDispatch } from "@/hooks/app-store/store-hook";
 import { useAuth } from "@/hooks/auth-hook";
+import TopBar from "@/components/top-bar/top-bar";
+import { useRouter } from "next/navigation";
 
 const WebChat = () => {
   const dispatch = useReduxDispatch();
-  const {auth} = useAuth();
+  const { auth } = useAuth();
+  const { push } = useRouter();
 
-  useEffect(() => {    
+  useEffect(() => {
+    dispatch({
+      type: "loading_room_set",
+      payload: {
+        room: true
+      }
+    })
+
     api.get<IRoom[]>("/load")
       .then(response => {
         dispatch({
@@ -23,19 +33,35 @@ const WebChat = () => {
         });
 
         if (response.data.length > 0)
-          dispatch({type: "selected_room_set", payload: {selectedRoom: response.data[0].id}})
+          dispatch({ type: "selected_room_set", payload: { selectedRoom: response.data[0].id } })
       })
-    .catch(error => console.error(error));
+      .catch(error => console.error(error))
+      .finally(() => {
+        dispatch({
+          type: "loading_room_set",
+          payload: {
+            room: false,
+          }
+        });
+      })
   }, []);
 
-  return ( 
+  useEffect(() => {
+    if (auth.status === "unauthenticated")
+      push("/auth/sign-in");
+  }, [auth]);
+
+  return (
     <div className="p-5 h-full w-full">
-      <div className="h-full w-full flex rounded-2xl overflow-hidden shadow-sm" >
+      <div className="h-full w-full flex rounded-2xl shadow-sm overflow-hidden" >
         <SideBar />
-        <Chat />
+        <div className="w-full flex flex-col">
+          <TopBar />
+          <Chat />
+        </div>
       </div>
-    </div> 
+    </div>
   );
 }
- 
+
 export default WebChat;
