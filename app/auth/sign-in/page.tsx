@@ -75,57 +75,63 @@ const SignIn = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full bg-secondary">
-      <Card className="min-w-[22.5rem]">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="">
-            <CardHeader>
-              <CardTitle className="text-center">Sign in</CardTitle>
-              <CardDescription className="text-center">to AnonChat</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-            <CardFooter className="flex flex-col gap-3">
-              {
-                errorMsg !== "" && <span className="self-start text-destructive text-sm font-semibold">Error: {errorMsg}</span>
-              }
-              <Button type="submit" className="w-full">
+      <div>
+        <p className="p-2 text-center text-destructive md:hidden">
+          Dear user, this app is in its first release and currently mobile support wasn&apos;t added yet.
+          You can still try to use the app, but it&apos;s highly recommended to use it on a computer.
+        </p>
+        <Card className="min-w-[22.5rem]">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="">
+              <CardHeader>
+                <CardTitle className="text-center">Sign in</CardTitle>
+                <CardDescription className="text-center">to AnonChat</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter className="flex flex-col gap-3">
                 {
-                  reqLoading ?
-                    <PulseLoader size={8} color="#fff" /> :
-                    "Sign In"
+                  errorMsg !== "" && <span className="self-start text-destructive text-sm font-semibold">Error: {errorMsg}</span>
                 }
-              </Button>
-              <Button variant="secondary" type="button" className="w-full" onClick={() => push("/auth/sign-up")}>Sign Up</Button>
-            </CardFooter>
-          </form>
-        </Form>
-      </Card>
+                <Button type="submit" className="w-full">
+                  {
+                    reqLoading ?
+                      <PulseLoader size={8} color="#fff" /> :
+                      "Sign In"
+                  }
+                </Button>
+                <Button variant="secondary" type="button" className="w-full" onClick={() => push("/auth/sign-up")}>Sign Up</Button>
+              </CardFooter>
+            </form>
+          </Form>
+        </Card>
+      </div>
     </div>
   );
 }
