@@ -11,6 +11,7 @@ interface ISocketContext {
 }
 
 const socketContext = createContext<ISocketContext | null>(null);
+const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "ws://localhost:3001";
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -19,7 +20,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (socket === null) {
-      setSocket(io("ws://localhost:3001"));
+      setSocket(io(socketUrl));
     } else {
       socket.on("connect", () => {
         console.log(`Socket ${socket.id} is connected`)
