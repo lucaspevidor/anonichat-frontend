@@ -1,6 +1,6 @@
 # AnoniChat Frontend
 
-The AnoniChat Frontend is the client-side component of my anonymous chat application built with Next.js and React, enabling users to engage in real-time chat without the need for email or phone verification. It offers features like easy account creation and deletion, channel creation, and messaging with other users. Please note that mobile support is planned for a future release.
+The AnoniChat Frontend is the client-side component of my anonymous chat application built with Next.js and React, enabling users to engage in real-time chat without the need for email or phone verification. It offers features like easy account creation and deletion, channel creation, and messaging with other users.
 
 ## Features
 
