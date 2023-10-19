@@ -11,6 +11,8 @@ import TopBar from "@/components/top-bar/top-bar";
 import { useRouter } from "next/navigation";
 
 const WebChat = () => {
+  const [showSidebar, setShowSidebar] = useState(false);
+
   const dispatch = useReduxDispatch();
   const { auth } = useAuth();
   const { push } = useRouter();
@@ -52,11 +54,11 @@ const WebChat = () => {
   }, [auth]);
 
   return (
-    <div className="p-5 h-full w-full">
-      <div className="h-full w-full flex rounded-2xl shadow-sm overflow-hidden" >
-        <SideBar />
+    <div className="p-0 md:p-5 h-full w-full">
+      <div className="h-full w-full flex md:rounded-2xl shadow-sm overflow-hidden relative" >
+        <SideBar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <div className="w-full flex flex-col">
-          <TopBar />
+          <TopBar setShowSidebar={setShowSidebar} />
           <Chat />
         </div>
       </div>

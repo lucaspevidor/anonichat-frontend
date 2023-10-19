@@ -2,7 +2,7 @@
 
 import { IRoom } from "@/hooks/app-store/reducer";
 import { useAppState } from "@/hooks/app-store/store-hook";
-import { UserPlus, Users, Trash2, LogOut } from "lucide-react";
+import { UserPlus, Users, Trash2, LogOut, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useAuth } from "@/hooks/auth-hook";
@@ -16,8 +16,11 @@ import {
 import TopBarTooltip from "./top-bar-tooltip";
 import { useModal } from "@/hooks/modal-hook";
 
+interface ITopBarProps {
+  setShowSidebar: (s: boolean) => void
+}
 
-const TopBar = () => {
+const TopBar = ({ setShowSidebar }: ITopBarProps) => {
   const appState = useAppState();
   const { auth } = useAuth();
   const { onOpen } = useModal();
@@ -27,23 +30,28 @@ const TopBar = () => {
   return (
     <TooltipProvider>
       <div className="flex bg-slate-100 py-2 px-5 justify-between items-center z-10 shadow-[0_0_10px_rgba(0,0,0,0.1)]">
-        <div className="flex flex-col">
-          <span className="text-lg font-semibold text-muted-foreground">
-            {
-              activeChannel?.name || "No channel selected"
-            }
-          </span>
-          {
-            activeChannel &&
-            <span className="text-sm text-muted-foreground">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" className="p-0 m-0 md:hidden" onClick={() => setShowSidebar(true)}>
+            <Menu className="text-slate-500 w-6 h-6" />
+          </Button>
+          <div className="flex flex-col">
+            <span className="text-lg font-semibold text-muted-foreground">
               {
-                activeChannel.memberIDs.length > 0 ?
-                  activeChannel.memberIDs.length === 1 ?
-                    "1 member" : `${activeChannel.memberIDs.length} members` :
-                  "No members"
+                activeChannel?.name || "No channel selected"
               }
             </span>
-          }
+            {
+              activeChannel &&
+              <span className="text-sm text-muted-foreground">
+                {
+                  activeChannel.memberIDs.length > 0 ?
+                    activeChannel.memberIDs.length === 1 ?
+                      "1 member" : `${activeChannel.memberIDs.length} members` :
+                    "No members"
+                }
+              </span>
+            }
+          </div>
         </div>
         {
           activeChannel &&

@@ -7,7 +7,7 @@ import { api } from "@/services/api";
 
 import "./s-side-bar.css";
 import { cn } from "@/lib/utils";
-import { LogOut, Plus, Trash2 } from "lucide-react";
+import { LogOut, Menu, Plus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import AddChannelDialog from "./add-channel-dialog";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
@@ -20,7 +20,12 @@ import Link from "next/link";
 import { PulseLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 
-const SideBar = () => {
+interface ISideBarProps {
+  showSidebar: boolean,
+  setShowSidebar: (s: boolean) => void
+}
+
+const SideBar = ({ showSidebar, setShowSidebar }: ISideBarProps) => {
 
   const { auth, clearAuth } = useAuth();
   const appState = useAppState();
@@ -42,11 +47,22 @@ const SideBar = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-slate-100 max-w-[20rem] min-w-[20rem] z-20 shadow-[0_0_10px_rgba(0,0,0,0.1)]">
+    <div
+      className={
+        cn("md:shadow-[0_0_10px_rgba(0,0,0,0.1)]",
+          showSidebar ? "flex translate-x-0 shadow-[0_0_10px_rgba(0,0,0,0.1)]" : "translate-x-[-20rem]",
+          "absolute md:relative md:flex md:translate-x-0 flex-col h-full bg-slate-100 max-w-[20rem] min-w-[20rem] z-20 transition-transform"
+        )
+      }>
       <div className="flex justify-between items-center p-5">
-        <div className="flex flex-col">
-          <span className="text-2xl font-semibold text-slate-800">AnoniChat</span>
-          <span className="text-muted-foreground">Welcome, {auth?.username}</span>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" className="p-0 m-0 md:hidden" onClick={() => setShowSidebar(false)}>
+            <Menu className="text-slate-500 w-6 h-6" />
+          </Button>
+          <div className="flex flex-col">
+            <span className="text-2xl font-semibold text-slate-800">AnoniChat</span>
+            <span className="text-muted-foreground">Welcome, {auth?.username}</span>
+          </div>
         </div>
         <Popover>
           <PopoverTrigger asChild>
