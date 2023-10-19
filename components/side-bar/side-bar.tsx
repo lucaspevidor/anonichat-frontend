@@ -51,7 +51,7 @@ const SideBar = ({ showSidebar, setShowSidebar }: ISideBarProps) => {
       className={
         cn("md:shadow-[0_0_10px_rgba(0,0,0,0.1)]",
           showSidebar ? "flex translate-x-0 shadow-[0_0_10px_rgba(0,0,0,0.1)]" : "translate-x-[-20rem]",
-          "absolute md:relative md:flex md:translate-x-0 flex-col h-full bg-slate-100 max-w-[20rem] min-w-[20rem] z-20 transition-transform"
+          "absolute md:relative md:flex md:translate-x-0 flex-col h-full bg-slate-100 max-w-[20rem] min-w-[20rem] z-30 transition-transform"
         )
       }>
       <div className="flex justify-between items-center p-5">

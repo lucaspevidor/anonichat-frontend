@@ -9,6 +9,7 @@ import { useReduxDispatch } from "@/hooks/app-store/store-hook";
 import { useAuth } from "@/hooks/auth-hook";
 import TopBar from "@/components/top-bar/top-bar";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const WebChat = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -60,6 +61,9 @@ const WebChat = () => {
         <div className="w-full flex flex-col">
           <TopBar setShowSidebar={setShowSidebar} />
           <Chat />
+        </div>
+        <div className={cn("absolute h-full w-full bg-transparent z-20 backdrop-blur-sm transition-all", !showSidebar && "hidden", "md:hidden")}>
+          <button className="w-full h-full" onClick={() => setShowSidebar(false)}></button>
         </div>
       </div>
     </div>
